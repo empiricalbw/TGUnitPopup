@@ -13,4 +13,5 @@ TGDropDown.xml
 TGUnitPopup.lua
 TGUnitSelfPopup.lua
 TGUnitRaidTargetIconPopup.lua
+TGDropDownConfig.lua
 TGDropDown.lua

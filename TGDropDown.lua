@@ -173,6 +173,8 @@ function TGDropDown:ReInit(config)
         height = height + f:GetHeight()
         if c == "!" then
             self:SetItemTitle(i)
+        elseif item.color then
+            self:SetItemColor(i, item.color)
         end
 
         f.Arrow:SetShown(item.child ~= nil)
@@ -271,13 +273,25 @@ end
 
 function TGDropDown:SetItemText(index, text)
     local f = self.items[index]
+    f.text = text
     f.LabelEnabled:SetText(text)
     f.LabelDisabled:SetText(text)
 end
 
 function TGDropDown:GetItemText(index)
     local f = self.items[index]
-    return f.LabelEnabled:GetText()
+    return f.text
+end
+
+local function ColoredText(text, r, g, b)
+    return string.format("|cFF%02x%02x%02x%s|r", r*255, g*255, b*255, text)
+end
+
+function TGDropDown:SetItemColor(index, color)
+    local f = self.items[index]
+    local ct = ColoredText(f.text, color.r, color.g, color.b)
+    f.LabelEnabled:SetText(ct)
+    f.LabelDisabled:SetText(ct)
 end
 
 function TGDropDown:SetItemEnabled(index, enabled)
