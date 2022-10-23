@@ -52,5 +52,4 @@ function TGUnitPopup.ShowUnitPopup(unit)
     dd:Show({point = "TOPLEFT", relativeTo = "cursor", dx = 20, dy = 0})
     dd.config.hideHandler = TGUnitPopup.VisiblePopupHidden
     TGUnitPopup.visiblePopup = dd
-    print(dd)
 end

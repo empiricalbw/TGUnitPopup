@@ -21,6 +21,12 @@ local TEMPLATE_BUTTON = CreateFrame("Button", nil, UIParent,
 
 local DD_POOL = {}
 
+function TGDropDown.Dump()
+    print("ADD_INDEX = "..tostring(ADD_INDEX))
+    print("#DD_POOL = "..tostring(#DD_POOL))
+    print("#ADD_BUTTON_POOL = "..tostring(#ADD_BUTTON_POOL))
+end
+
 function TGDropDown:_New()
     local dd = {}
     setmetatable(dd, self)
@@ -42,6 +48,12 @@ function TGDropDown:New(config)
 end
 
 function TGDropDown:Free()
+    for _, item in ipairs(self.config.items) do
+        if item.child then
+            item.child:Free()
+        end
+    end
+    self.frame:SetScript("OnHide", nil)
     self:Hide()
     self.config = nil
     table.insert(DD_POOL, self)
@@ -77,7 +89,6 @@ function TGDropDown:Init(config)
     ADD_INDEX  = ADD_INDEX + 1
 
     self.frame = CreateFrame("Frame", name, UIParent, "TGDropDownListTemplate")
-    self.frame:SetScript("OnHide", function() self:OnHide() end)
     self.items = {}
 
     if config ~= nil then
@@ -92,11 +103,14 @@ function TGDropDown:ReInit(config)
         self:FreeButton(table.remove(self.items))
     end
 
+    self.frame:SetScript("OnHide", function() self:OnHide() end)
+
     self.frame:Hide()
     self.frame:SetWidth(12)
     self.frame:SetHeight(20)
 
     self.config = config
+    self.child  = nil
 
     if config.anchor then
         assert(config.anchor.relativeTo ~= nil)
@@ -108,6 +122,11 @@ function TGDropDown:ReInit(config)
                             config.anchor.dy)
     end
 
+    local hasChildren = false
+    for _, item in ipairs(config.items) do
+        hasChildren = hasChildren or (item.child ~= nil)
+    end
+
     local fwidth = config.width or 32
     if fwidth <= 32 then
         for _, s in ipairs(config.items) do
@@ -116,9 +135,13 @@ function TGDropDown:ReInit(config)
                 TEMPLATE_BUTTON.LabelEnabled:GetUnboundedStringWidth() + 32)
         end
     end
+    if hasChildren then
+        fwidth = fwidth + 16
+    end
 
-    local x      = 12
-    local height = self.frame:GetHeight()
+    local x        = 12
+    local height   = self.frame:GetHeight()
+    local hasArrow = false
     for i, item in ipairs(config.items) do
         local f = self:AllocButton(config.rheight)
         f.XButton:SetScript("OnClick", function() self:OnXClick(i) end)
@@ -132,6 +155,7 @@ function TGDropDown:ReInit(config)
         end
         self:SetItemText(i, item.name:sub(2))
         f:SetScript("OnClick", function() self:OnItemClick(i) end)
+        f:SetScript("OnEnter", function() self:OnItemEnter(i) end)
 
         f.selected = false
 
@@ -150,6 +174,8 @@ function TGDropDown:ReInit(config)
         if c == "!" then
             self:SetItemTitle(i)
         end
+
+        f.Arrow:SetShown(item.child ~= nil)
     end
 
     self.frame:SetHeight(height)
@@ -203,6 +229,23 @@ function TGDropDown:OnHide()
     local h = self.config.hideHandler
     if h then
         h(self)
+    end
+end
+
+function TGDropDown:OnItemEnter(index)
+    local c = self.config.items[index]
+    if c.child then
+        if self.child then
+            self.child:Hide()
+        end
+        self.child = c.child
+        self.child:Show({point="TOPLEFT",
+                         relativeTo=self.items[index],
+                         relativePoint="TOPRIGHT",
+                         dx=0,
+                         dy=16})
+    elseif self.child then
+        self.child:Hide()
     end
 end
 

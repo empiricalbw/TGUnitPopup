@@ -14,8 +14,6 @@ local function RaidTargetIconHandler(dd, index)
     local unit = dd.config._unit
     TGUnitPopup.HideUnitPopup()
 
-    print(unit)
-    print(index)
     if index == 10 then
         SetRaidTarget(unit, 0)
     else
