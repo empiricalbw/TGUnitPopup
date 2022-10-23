@@ -1,0 +1,16 @@
+## Interface: 30400
+## Title: TGUnitPopup
+## Author: Empirical
+## Version: 1.0a1
+## DefaultState: enabled
+## Notes: Thor's Godly unit frame popup replacement
+## URL: 
+## Dependencies:
+## SavedVariables:
+
+TGDropDown.xml
+
+TGUnitPopup.lua
+TGUnitSelfPopup.lua
+TGUnitRaidTargetIconPopup.lua
+TGDropDown.lua

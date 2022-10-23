@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+    <Frame name="TGDropDownListTemplate" frameStrata="TOOLTIP" toplevel="true" virtual="true" inherits="BackdropTemplate" enableMouse="true" hidden="true">
+        <KeyValues>
+            <KeyValue key="backdropInfo" value="TGUNITPOPUP_DROPDOWN_BACKDROP_INFO" type="global"/>
+        </KeyValues>
+    </Frame>
+
+    <Button name="TGDropDownItemTemplate" virtual="true">
+        <Size x="100" y="13"/>
+        <Frames>
+            <Button parentKey="XButton" hidden="true">
+                <Size x="16" y="16"/>
+                <Anchors>
+                    <Anchor point="LEFT" x="0" y="1"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="Texture" file="Interface\FriendsFrame\ClearBroadcastIcon" setAllPoints="true"/>
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="RadioOn" file="Interface\Common\UI-DropDownRadioChecks" hidden="true">
+                    <Size x="16" y="16"/>
+                    <Anchors>
+                        <Anchor point="LEFT" y="1"/>
+                    </Anchors>
+                    <TexCoords left="0" right="0.5" top="0.5" bottom="1.0"/>
+                </Texture>
+                <Texture parentKey="RadioOff" file="Interface\Common\UI-DropDownRadioChecks" hidden="true">
+                    <Size x="16" y="16"/>
+                    <Anchors>
+                        <Anchor point="LEFT" y="1"/>
+                    </Anchors>
+                    <TexCoords left="0.5" right="1.0" top="0.5" bottom="1.0"/>
+                </Texture>
+                <Texture parentKey="CheckMark" file="Interface\Buttons\UI-CheckBox-Check" hidden="true">
+                    <Size x="16" y="16"/>
+                    <Anchors>
+                        <Anchor point="LEFT" y="1"/>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="Separator" file="Interface\Common\UI-TooltipDivider-Transparent" hidden="true">
+                    <Size y="8"/>
+                    <Anchors>
+                        <Anchor point="LEFT" y="-1"/>
+                        <Anchor point="RIGHT" x="-11" y="-1"/>
+                    </Anchors>
+                </Texture>
+                <FontString parentKey="LabelEnabled" font="GameFontWhiteSmall" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="16"/>
+                        <Anchor point="BOTTOMRIGHT"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="LabelDisabled" font="GameFontDisableSmallLeft" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="16"/>
+                        <Anchor point="BOTTOMRIGHT"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD" setAllPoints="true"/>
+    </Button>
+</Ui>
