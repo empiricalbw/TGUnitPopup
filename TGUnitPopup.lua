@@ -6,7 +6,7 @@ TGUnitPopup = {
 
 function TGUnitPopup.HideUnitPopup(unit)
     if TGUnitPopup.visiblePopup ~= nil then
-        if unit == nil or TGUnitPopup.visiblePopup.config._unit == unit then
+        if unit == nil or TGUnitPopup.visiblePopup.config.unit == unit then
             TGUnitPopup.visiblePopup:Hide()
         end
     end
@@ -22,18 +22,24 @@ function TGUnitPopup.ShowUnitPopup(unit)
     TGUnitPopup.HideUnitPopup()
 
     local key
-    if UnitIsUnit(unit,"player") then
+    if UnitIsUnit(unit, "player") then
         key = "SELF"
-    elseif UnitIsUnit(unit,"pet") then
+    elseif UnitIsUnit(unit, "vehicle") then
+        key = "VEHICLE"
+    elseif UnitIsUnit(unit, "pet") then
         key = "PET"
+    elseif UnitIsOtherPlayersPet(unit) then
+        key = "OTHERPET"
     elseif UnitIsPlayer(unit) then
-        id = UnitInRaid(unit)
+        local id = UnitInRaid(unit)
         if id then
             key = "RAID_PLAYER"
         elseif UnitInParty(unit) then
             key = "PARTY"
-        else
+        elseif UnitCanCooperate("player", unit) then
             key = "PLAYER"
+        else
+            key = "ENEMY_PLAYER"
         end
     else
         key = "RAID_TARGET_ICON"
@@ -48,7 +54,7 @@ function TGUnitPopup.ShowUnitPopup(unit)
         return
     end
 
-    dd = cg(unit)
+    local dd = cg(unit)
     dd:Show({point = "TOPLEFT", relativeTo = "cursor", dx = 20, dy = 0})
     dd.config.hideHandler = TGUnitPopup.VisiblePopupHidden
     TGUnitPopup.visiblePopup = dd

@@ -58,9 +58,8 @@ local function DontPassOnLoot(dd, index)
     TGUnitPopup.HideUnitPopup()
 end
 
-local function PromoteToLootMaster(dd, index)
-    local unit = dd.config._unit
-    SetLootMethod("master", unit, 2)
+function TGUnitPopup.PromoteToLootMaster(dd, index)
+    SetLootMethod("master", dd.config.unit, 2)
     TGUnitPopup.HideUnitPopup()
 end
 
@@ -192,30 +191,6 @@ local function PassOnLootDropDown(unit)
     return dd
 end
 
-local function IsPartyLeader()
-    return IsInGroup() and UnitIsGroupLeader("player")
-end
-
-local function IsMasterLooter(unit)
-    if not IsInGroup() then
-        return false
-    end
-
-    local lootMethod, partyIndex, raidIndex = GetLootMethod()
-    if lootMethod ~= "master" then
-        return false
-    end
-    if partyIndex == 0 then
-        return UnitIsUnit(unit, "player")
-    elseif partyIndex ~= nil then
-        return UnitIsUnit(unit, "party"..partyIndex)
-    elseif raidIndex ~= nil then
-        return UnitIsUnit(unit, "raid"..raidIndex)
-    end
-
-    return false
-end
-
 local function GetDungeonDifficultyName(unit)
     local did = GetDungeonDifficultyID()
     if did == 1 then
@@ -264,10 +239,13 @@ local function RaidDifficultyDropDown(unit)
     return dd
 end
 
-local function ConfigDropDown(unit)
+TGUnitPopup.configGenerators["SELF"] = function(unit)
     local c = TGUnitPopup.DropDownConfig:New(unit, 16, HideHandler)
 
     c:AddLine("!"..UnitName("player"))
+    if IsInGroup() then
+        c:AddLine(" "..SET_ROLE, nil, TGUnitPopup.SetRoleDropDown(unit))
+    end
     c:AddLine(" Raid Target Icon", nil,
               TGUnitPopup.configGenerators["RAID_TARGET_ICON"](unit))
     c:AddLine(" Player vs. Player", nil, PVPDropDown(unit))
@@ -281,17 +259,17 @@ local function ConfigDropDown(unit)
         c:SetColor(ITEM_QUALITY_COLORS[GetLootThreshold()])
     end
     c:AddLine(GetPassOnLootName(unit), nil, PassOnLootDropDown(unit))
-    if IsPartyLeader() and GetLootMethod() == "master" then
-        if IsMasterLooter(unit) then
+    if TGUnitPopup.IsPartyLeader() and GetLootMethod() == "master" then
+        if TGUnitPopup.IsMasterLooter(unit) then
             c:AddLine("-"..LOOT_PROMOTE)
         else
-            c:AddLine(" "..LOOT_PROMOTE, PromoteToLootMaster)
+            c:AddLine(" "..LOOT_PROMOTE, TGUnitPopup.PromoteToLootMaster)
         end
     end
 
     c:AddSeparator()
     c:AddLine("!Instance Options")
-    if IsPartyLeader() and not IsInRaid() and
+    if TGUnitPopup.IsPartyLeader() and not IsInRaid() and
         not IsInGroup(LE_PARTY_CATEGORY_INSTANCE)
     then
         c:AddLine(" "..CONVERT_TO_RAID, TGUConvertToRaid)
@@ -307,16 +285,14 @@ local function ConfigDropDown(unit)
     c:AddLine(" Reset all instances", ResetInstances)
 
     c:AddSeparator()
-    c:AddLine("!Other Options")
+    c:AddLine("!"..UNIT_FRAME_DROPDOWN_SUBSECTION_TITLE_OTHER)
     local _, instanceType = IsInInstance()
     if IsInGroup() and not IsInGroup(LE_PARTY_CATEGORY_INSTANCE) and
         instanceType ~= "pvp" and instanceType ~= "arena"
     then
         c:AddLine(" "..PARTY_LEAVE, TGULeaveParty)
     end
-    c:AddLine(" Cancel")
+    c:AddLine(" "..CANCEL)
 
     return TGUnitPopup.DropDown:New(c)
 end
-
-TGUnitPopup.configGenerators["SELF"] = ConfigDropDown

@@ -11,7 +11,7 @@
 --      oNone
 
 local function RaidTargetIconHandler(dd, index)
-    local unit = dd.config._unit
+    local unit = dd.config.unit
     TGUnitPopup.HideUnitPopup()
 
     if index == 10 then
@@ -21,9 +21,9 @@ local function RaidTargetIconHandler(dd, index)
     end
 end
 
-local function ConfigDropDown(unit)
+TGUnitPopup.configGenerators["RAID_TARGET_ICON"] = function(unit)
     local config = {
-        _unit = unit,
+        unit = unit,
         rheight = 16,
         items = {
              {name = "!"..RAID_TARGET_ICON},
@@ -48,5 +48,3 @@ local function ConfigDropDown(unit)
 
     return dd
 end
-
-TGUnitPopup.configGenerators["RAID_TARGET_ICON"] = ConfigDropDown

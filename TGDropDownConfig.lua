@@ -4,7 +4,7 @@ local TGDropDownConfig = TGUnitPopup.DropDownConfig
 
 function TGDropDownConfig:New(unit, rheight, handler)
     local ddc = {
-        _unit   = unit,
+        unit    = unit,
         rheight = rheight,
         handler = handler,
         items   = {},
