@@ -21,6 +21,16 @@ local TEMPLATE_BUTTON = CreateFrame("Button", nil, UIParent,
 
 local DD_POOL = {}
 
+function TGDropDown:log(...)
+    local timestamp = GetTime()
+    TGUnitPopup.log:log(2, "[", timestamp, " - ", tostring(self), "] ", ...)
+end
+
+function TGDropDown:dbg(...)
+    local timestamp = GetTime()
+    TGUnitPopup.log:log(1, "[", timestamp, " - ", tostring(self), "] ", ...)
+end
+
 function TGDropDown.Dump()
     print("ADD_INDEX = "..tostring(ADD_INDEX))
     print("#DD_POOL = "..tostring(#DD_POOL))
@@ -48,6 +58,7 @@ function TGDropDown:New(config)
 end
 
 function TGDropDown:Free()
+    self:dbg("Freeing...")
     for _, item in ipairs(self.config.items) do
         if item.child then
             item.child:Free()
@@ -63,6 +74,8 @@ function TGDropDown:AllocButton()
     local f
     if #ADD_BUTTON_POOL > 0 then
         f = table.remove(ADD_BUTTON_POOL)
+        self:dbg("Allocated button "..tostring(f).." from pool (prev name '"..
+                 f.text.."')")
         f:SetParent(self.frame)
         f:Show()
         return f
@@ -70,6 +83,7 @@ function TGDropDown:AllocButton()
 
     f = CreateFrame("Button", nil, self.frame,
                     "TGDropDownItemTemplate")
+    self:dbg("Allocated new button "..tostring(f))
     local b = f.XButton
     b.Texture:SetAlpha(0.5)
     b:SetScript("OnEnter", function() b.Texture:SetAlpha(1) end)
@@ -78,6 +92,7 @@ function TGDropDown:AllocButton()
 end
 
 function TGDropDown:FreeButton(b)
+    self.dbg("Freeing button "..tostring(b))
     b:ClearAllPoints()
     b:Hide()
     b:SetParent(UIParent)
@@ -99,6 +114,8 @@ function TGDropDown:Init(config)
 end
 
 function TGDropDown:ReInit(config)
+    self:dbg("Reinitializing...")
+
     while #self.items > 0 do
         self:FreeButton(table.remove(self.items))
     end
@@ -112,8 +129,11 @@ function TGDropDown:ReInit(config)
     self.config = config
     self.child  = nil
 
+    --[[
     if config.anchor then
         assert(config.anchor.relativeTo ~= nil)
+        self:dbg("Anchoring dropdown "..tostring(self).." to "..
+                 tostring(config.anchor.relativeTo))
         self.frame:ClearAllPoints()
         self.frame:SetPoint(config.anchor.point,
                             config.anchor.relativeTo,
@@ -121,6 +141,7 @@ function TGDropDown:ReInit(config)
                             config.anchor.dx,
                             config.anchor.dy)
     end
+    ]]
 
     local hasChildren = false
     for _, item in ipairs(config.items) do
@@ -142,7 +163,9 @@ function TGDropDown:ReInit(config)
     local x        = 12
     local height   = self.frame:GetHeight()
     local hasArrow = false
+    self:dbg("Populating...")
     for i, item in ipairs(config.items) do
+        self:dbg(tostring(i)..": Adding entry '"..item.name.."'")
         local f = self:AllocButton(config.rheight)
         f.XButton:SetScript("OnClick", function() self:OnXClick(i) end)
         table.insert(self.items, f)
@@ -151,6 +174,11 @@ function TGDropDown:ReInit(config)
         if i == 1 then
             f:SetPoint("TOPLEFT", x, -10)
         else
+            if f:GetNumPoints() ~= 0 then
+                self:log("f:GetNumPoints() = "..tostring(f:GetNumPoints()))
+                self:log("i = "..tostring(i))
+                f:ClearAllPoints()
+            end
             f:SetPoint("TOPLEFT", self.items[i - 1], "BOTTOMLEFT")
         end
         self:SetItemText(i, item.name:sub(2))
@@ -165,6 +193,7 @@ function TGDropDown:ReInit(config)
         f.XButton:SetShown(c == "x")
         f.RadioOff:SetShown(c == "o")
         f.RadioOn:Hide()
+        f.CheckMark:Hide()
         if item.name == "-" then
             f:SetHeight(8)
         else

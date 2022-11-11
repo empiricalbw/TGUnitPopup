@@ -2,7 +2,14 @@
 TGUnitPopup = {
     visiblePopup     = nil,
     configGenerators = {},
+    log              = TGLog:new(1, 2),
 }
+TGUP_LOG = {}
+
+function TGUnitPopup.Dump()
+    TGUnitPopup.log:dump()
+    TGUP_LOG = TGUnitPopup.log.lines
+end
 
 function TGUnitPopup.HideUnitPopup(unit)
     if TGUnitPopup.visiblePopup ~= nil then

@@ -36,7 +36,7 @@ TGUnitPopup.configGenerators["PLAYER"] = function(unit)
     end
 
     c:AddLine("!"..UNIT_FRAME_DROPDOWN_SUBSECTION_TITLE_INTERACT)
-    if TGUnitPopup.IsPartyLeader() then
+    if not IsInGroup() or UnitIsGroupLeader("player") then
         c:AddLine(" "..PARTY_INVITE, TGUnitPopup.InviteUnit)
     end
     c:AddLine(" "..WHISPER, TGUnitPopup.SendTell)

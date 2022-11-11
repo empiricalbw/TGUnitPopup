@@ -48,7 +48,7 @@ TGUnitPopup.configGenerators["PARTY"] = function(unit)
               TGUnitPopup.configGenerators["RAID_TARGET_ICON"](unit))
     -- TODO: Battle tag friends
     if TGUnitPopup.CanAddFriend(unit) then
-        c:AddLine(" "..ADD_FRIEND, AddFriend)
+        c:AddLine(" "..ADD_FRIEND, TGUnitPopup.AddFriend)
     end
     c:AddLine("!"..UNIT_FRAME_DROPDOWN_SUBSECTION_TITLE_INTERACT)
     if TGUnitPopup.IsPartyLeader() then
