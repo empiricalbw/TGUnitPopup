@@ -23,12 +23,16 @@ local DD_POOL = {}
 
 function TGDropDown:log(...)
     local timestamp = GetTime()
-    TGUnitPopup.log:log(2, "[", timestamp, " - ", tostring(self), "] ", ...)
+    local datestamp = date()
+    TGUnitPopup.log:log(2, "[", datestamp, " - ", timestamp, " - ",
+                        tostring(self), "] ", ...)
 end
 
 function TGDropDown:dbg(...)
     local timestamp = GetTime()
-    TGUnitPopup.log:log(1, "[", timestamp, " - ", tostring(self), "] ", ...)
+    local datestamp = date()
+    TGUnitPopup.log:log(1, "[", datestamp, " - ", timestamp, " - ",
+                        tostring(self), "] ", ...)
 end
 
 function TGDropDown.Dump()
@@ -65,6 +69,7 @@ function TGDropDown:Free()
         end
     end
     self.frame:SetScript("OnHide", nil)
+    self.frame:ClearAllPoints()
     self:Hide()
     self.config = nil
     table.insert(DD_POOL, self)
@@ -115,6 +120,11 @@ end
 
 function TGDropDown:ReInit(config)
     self:dbg("Reinitializing...")
+    if UnitAffectingCombat("player") then
+        self:dbg("In combat.")
+    else
+        self:dbg("Out of combat.")
+    end
 
     while #self.items > 0 do
         self:FreeButton(table.remove(self.items))
@@ -181,6 +191,7 @@ function TGDropDown:ReInit(config)
             end
             f:SetPoint("TOPLEFT", self.items[i - 1], "BOTTOMLEFT")
         end
+        self:dbg("SetPoint() completed.")
         self:SetItemText(i, item.name:sub(2))
         f:SetScript("OnClick", function() self:OnItemClick(i) end)
         f:SetScript("OnEnter", function() self:OnItemEnter(i) end)
