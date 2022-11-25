@@ -14,8 +14,13 @@ function TGDropDownConfig:New(unit, rheight, handler)
     return ddc
 end
 
-function TGDropDownConfig:AddLine(name, handler, child)
-    table.insert(self.items, {name=name, handler=handler, child=child})
+function TGDropDownConfig:AddLine(name, handler, childConfig)
+    table.insert(self.items,
+                 {name=name, handler=handler, childConfig=childConfig})
+end
+
+function TGDropDownConfig:SetRadio(index, selected)
+    self.items[index].radio = selected
 end
 
 function TGDropDownConfig:AddSeparator()
