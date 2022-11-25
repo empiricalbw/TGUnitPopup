@@ -52,5 +52,5 @@ TGUnitPopup.configGenerators["PLAYER"] = function(unit)
     -- TODO: Report group member.
     c:AddLine(" "..CANCEL)
 
-    return TGUnitPopup.DropDown:New(c)
+    return c
 end

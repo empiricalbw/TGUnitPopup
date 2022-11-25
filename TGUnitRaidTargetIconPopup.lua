@@ -40,16 +40,6 @@ TGUnitPopup.configGenerators["RAID_TARGET_ICON"] = function(unit)
         handler = RaidTargetIconHandler,
     }
 
-    --[[
-    local dd = TGUnitPopup.DropDown:New(config)
-    local currTarget = GetRaidTargetIndex(unit)
-    if currTarget ~= nil and currTarget > 0 then
-        dd:SetRadio(currTarget + 1, true)
-    end
-
-    return dd
-    ]]
-
     local currTarget = GetRaidTargetIndex(unit)
     if currTarget ~= nil and currTarget > 0 then
         config.items[currTarget + 1].radio = true

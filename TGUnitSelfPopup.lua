@@ -108,17 +108,16 @@ local function HideHandler(dd, index)
 end
 
 local function PVPDropDown(unit)
+    local pvp = GetPVPDesired()
     local c = TGUnitPopup.DropDownConfig:New(unit, 16)
     c:AddLine("!Player vs. Player")
     c:AddLine("oEnabled", EnablePVP)
     c:AddLine("oDisabled", DisablePVP)
 
-    local dd = TGUnitPopup.DropDown:New(c)
-    local pvp = GetPVPDesired()
-    dd:SetRadio(2, pvp)
-    dd:SetRadio(3, not pvp)
+    c.items[2].radio = pvp
+    c.items[3].radio = not pvp
 
-    return dd
+    return c
 end
 
 local LOOT_TABLE = {
@@ -130,26 +129,26 @@ local LOOT_TABLE = {
 }
 
 local function LootMethodDropDown(unit)
-    local c = TGUnitPopup.DropDownConfig:New(unit, 16)
-    c:AddLine(" "..LOOT_FREE_FOR_ALL, SetLootFreeForAll)
-    c:AddLine(" "..LOOT_ROUND_ROBIN, SetLootRoundRobin)
-    c:AddLine(" "..LOOT_MASTER_LOOTER, SetLootMasterLooter)
-    c:AddLine(" "..LOOT_GROUP_LOOT, SetLootGroupLoot)
-    c:AddLine(" "..LOOT_NEED_BEFORE_GREED, SetLootNeedBeforeGreed)
+    local e
+    if not UnitIsGroupLeader("player") then
+        e = "-"
+    else
+        e = " "
+    end
 
-    local dd = TGUnitPopup.DropDown:New(c)
+    local c = TGUnitPopup.DropDownConfig:New(unit, 16)
+    c:AddLine(e..LOOT_FREE_FOR_ALL, SetLootFreeForAll)
+    c:AddLine(e..LOOT_ROUND_ROBIN, SetLootRoundRobin)
+    c:AddLine(e..LOOT_MASTER_LOOTER, SetLootMasterLooter)
+    c:AddLine(e..LOOT_GROUP_LOOT, SetLootGroupLoot)
+    c:AddLine(e..LOOT_NEED_BEFORE_GREED, SetLootNeedBeforeGreed)
+
     local index = LOOT_TABLE[GetLootMethod()]
     if index then
-        dd:CheckOneItem(index)
+        c.items[index].checked = true
     end
 
-    if not UnitIsGroupLeader("player") then
-        for i=1, #dd.items do
-            dd:DisableItem(i)
-        end
-    end
-
-    return dd
+    return c
 end
 
 local function LootThresholdDropDown(unit)
@@ -162,12 +161,12 @@ local function LootThresholdDropDown(unit)
     c:AddLine(" "..ITEM_QUALITY3_DESC, SetLootThresholdRare)
     c:AddLine(" "..ITEM_QUALITY4_DESC, SetLootThresholdEpic)
 
-    local dd = TGUnitPopup.DropDown:New(c)
-    dd:SetItemColor(1, ITEM_QUALITY_COLORS[2])
-    dd:SetItemColor(2, ITEM_QUALITY_COLORS[3])
-    dd:SetItemColor(3, ITEM_QUALITY_COLORS[4])
-    dd:CheckOneItem(GetLootThreshold() - 1)
-    return dd
+    c.items[1].color = ITEM_QUALITY_COLORS[2]
+    c.items[2].color = ITEM_QUALITY_COLORS[3]
+    c.items[3].color = ITEM_QUALITY_COLORS[4]
+    c.items[GetLootThreshold() - 1].checked = true
+
+    return c
 end
 
 local function GetPassOnLootName(unit)
@@ -183,12 +182,11 @@ local function PassOnLootDropDown(unit)
     c:AddLine("oYes", PassOnLoot)
     c:AddLine("oNo", DontPassOnLoot)
 
-    local dd = TGUnitPopup.DropDown:New(c)
     local pass = GetOptOutOfLoot()
-    dd:SetRadio(2, pass)
-    dd:SetRadio(3, not pass)
+    c.items[2].radio = pass
+    c.items[3].radio = not pass
 
-    return dd
+    return c
 end
 
 local function GetDungeonDifficultyName(unit)
@@ -207,12 +205,11 @@ local function DungeonDifficultyDropDown(unit)
     c:AddLine("oNormal", SetDungeonNormal)
     c:AddLine("oHeroic", SetDungeonHeroic)
 
-    local dd = TGUnitPopup.DropDown:New(c)
     local did = GetDungeonDifficultyID()
-    dd:SetRadio(2, did == 1)
-    dd:SetRadio(3, did == 2)
+    c.items[2].radio = (did == 1)
+    c.items[3].radio = (did == 2)
 
-    return dd
+    return c
 end
 
 local function GetRaidDifficultyName(unit)
@@ -231,12 +228,11 @@ local function RaidDifficultyDropDown(unit)
     c:AddLine("o10 Player", SetRaid10Player)
     c:AddLine("o25 Player", SetRaid25Player)
 
-    local dd = TGUnitPopup.DropDown:New(c)
     local did = GetRaidDifficultyID()
-    dd:SetRadio(2, did == 3)
-    dd:SetRadio(3, did == 4)
+    c.items[2].radio = (did == 3)
+    c.items[3].radio = (did == 4)
 
-    return dd
+    return c
 end
 
 TGUnitPopup.configGenerators["SELF"] = function(unit)
@@ -294,5 +290,5 @@ TGUnitPopup.configGenerators["SELF"] = function(unit)
     end
     c:AddLine(" "..CANCEL)
 
-    return TGUnitPopup.DropDown:New(c)
+    return c
 end

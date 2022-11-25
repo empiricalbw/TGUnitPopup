@@ -88,5 +88,5 @@ TGUnitPopup.configGenerators["PARTY"] = function(unit)
     end
     c:AddLine(" "..CANCEL)
 
-    return TGUnitPopup.DropDown:New(c)
+    return c
 end

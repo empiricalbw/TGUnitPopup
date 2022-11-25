@@ -61,7 +61,8 @@ function TGUnitPopup.ShowUnitPopup(unit)
         return
     end
 
-    local dd = cg(unit)
+    local c = cg(unit)
+    local dd = TGUnitPopup.DropDown:New(c)
     dd:Show({point = "TOPLEFT", relativeTo = "cursor", dx = 20, dy = 0})
     dd.config.hideHandler = TGUnitPopup.VisiblePopupHidden
     TGUnitPopup.visiblePopup = dd

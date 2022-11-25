@@ -25,11 +25,10 @@ TGUnitPopup.SetRoleDropDown = function(unit)
     c:AddLine(" "..INLINE_HEALER_ICON.." "..HEALER, SetRoleHealer)
     c:AddLine(" "..INLINE_DAMAGER_ICON.." "..DAMAGER, SetRoleDPS)
 
-    local dd = TGUnitPopup.DropDown:New(c)
     local index = ROLE_TABLE[UnitGroupRolesAssigned(unit)]
     if index ~= nil then
-        dd:CheckOneItem(index)
+        c.items[index].checked = true
     end
 
-    return dd
+    return c
 end

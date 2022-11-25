@@ -139,23 +139,12 @@ function TGDropDown:ReInit(config)
     self.config = config
     self.child  = nil
 
-    --[[
-    if config.anchor then
-        assert(config.anchor.relativeTo ~= nil)
-        self:dbg("Anchoring dropdown "..tostring(self).." to "..
-                 tostring(config.anchor.relativeTo))
-        self.frame:ClearAllPoints()
-        self.frame:SetPoint(config.anchor.point,
-                            config.anchor.relativeTo,
-                            config.anchor.relativePoint,
-                            config.anchor.dx,
-                            config.anchor.dy)
-    end
-    ]]
-
     local hasChildren = false
     for _, item in ipairs(config.items) do
-        hasChildren = hasChildren or (item.child ~= nil)
+        if item.childConfig ~= nil then
+            hasChildren = true
+            item.child = TGDropDown:New(item.childConfig)
+        end
     end
 
     local fwidth = config.width or 32
@@ -202,9 +191,22 @@ function TGDropDown:ReInit(config)
         self:SetItemEnabled(i, c ~= "-")
         f.Separator:SetShown(item.name == "-")
         f.XButton:SetShown(c == "x")
-        f.RadioOff:SetShown(c == "o")
-        f.RadioOn:Hide()
-        f.CheckMark:Hide()
+        if c == "o" then
+            if item.radio ~= nil then
+                self:SetRadio(i, item.radio)
+            else
+                f.RadioOff:SetShown(c == "o")
+                f.RadioOn:Hide()
+            end
+        else
+            f.RadioOff:Hide()
+            f.RadioOn:Hide()
+        end
+        if item.checked ~= nil then
+            f.CheckMark:SetShown(item.checked)
+        else
+            f.CheckMark:Hide()
+        end
         if item.name == "-" then
             f:SetHeight(8)
         else
