@@ -19,6 +19,11 @@ function TGDropDownConfig:AddLine(name, handler, childConfig)
                  {name=name, handler=handler, childConfig=childConfig})
 end
 
+function TGDropDownConfig:InsertLine(i, name, handler, childConfig)
+    table.insert(self.items, i,
+                 {name=name, handler=handler, childConfig=childConfig})
+end
+
 function TGDropDownConfig:SetRadio(index, selected)
     self.items[index].radio = selected
 end
